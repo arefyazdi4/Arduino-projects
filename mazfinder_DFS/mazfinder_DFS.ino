@@ -50,8 +50,8 @@ const int outLp = 9;
 const int outLn = 10;
 
 // creating n*n matrix for drawing mapp   
-const int H = 100;
-const int W = 100;
+const int H = 5;
+const int W = 5;
 int mazz[H][W];
 
 // directions value  
@@ -63,7 +63,7 @@ const int left = 3;
 // turn or moving time quantom 
 const int small_block = 210;  
 const int full_block = 1100; //1980
-const int small_turn = 80;
+const int small_turn = 100;
 const int full_turn = 320;
 
 // variables
@@ -74,6 +74,8 @@ int x = W/2;
 int y = H/2;      
 
 void print_mazz (){
+  Serial.println();
+  Serial.println();
   for (int i = 0 ; i < W ; i++ )
   {
   Serial.println();
@@ -111,7 +113,7 @@ void setup()
   pinMode(outLn, OUTPUT);
 
   // pinMode(LED_BUILTIN, OUTPUT);
-
+  Serial.begin(9600);
   // set a mazz default value -1   
   for (int i = 0 ; i < W ; i++ )
   {
@@ -120,6 +122,7 @@ void setup()
       mazz [i][j] = -1;
     }
   }
+
 }
 
 
@@ -127,7 +130,6 @@ void setup()
 void loop()
 {
   
-  // print_mazz();
 
   if (turn >= full_turn) {
     turn %= full_turn;
@@ -142,6 +144,9 @@ void loop()
     
   // drawing a mazz map  
   if (block >= full_block) {
+    
+    print_mazz();
+    
     block %= full_block;
     mazz[x][y] = direction; 
     switch (direction) {
@@ -206,13 +211,21 @@ void loop()
   }
 
   if (buttonStateR == HIGH && buttonStateL == HIGH){
+    
     digitalWrite(outLn, HIGH);
     digitalWrite(outLp, LOW);
+    digitalWrite(outRn, HIGH);
+    digitalWrite(outRp, LOW);
     
+    delay(small_block*2); 
+    block += small_block*2;
+    
+    digitalWrite(outLn, HIGH);
+    digitalWrite(outLp, LOW);
     digitalWrite(outRp, HIGH);
     digitalWrite(outRn, LOW);
     
-    delay(full_turn);
-    turn =- full_turn;      
+    delay(full_turn+small_turn);
+    turn =- (full_turn+small_turn);      
   }
 }
