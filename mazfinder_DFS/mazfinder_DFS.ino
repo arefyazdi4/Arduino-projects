@@ -50,8 +50,8 @@ const int outLp = 9;
 const int outLn = 10;
 
 // creating n*n matrix for drawing mapp   
-const int H = 5;
-const int W = 5;
+const int H = 8;
+const int W = 8;
 int mazz[H][W];
 
 // directions value  
@@ -74,16 +74,24 @@ int x = W/2;
 int y = H/2;      
 
 void print_mazz (){
-  Serial.println();
-  Serial.println();
   for (int i = 0 ; i < W ; i++ )
   {
   Serial.println();
   for (int j=0 ; j<H ;j++)
     {
-      Serial.print(mazz [i][j]);
+      switch(mazz [i][j])
+        {
+          case -1 :Serial.print('o'); break;
+          case 0 :Serial.print('u'); break;
+          case 1 :Serial.print('e'); break;
+          case 2 :Serial.print('s'); break;
+          case 3 :Serial.print('w'); break;
+          default :  Serial.println();
+        }
     }
   }
+  Serial.println();
+  Serial.println();
 }  
 
 void hand_on_wall (){
@@ -92,7 +100,7 @@ void hand_on_wall (){
     digitalWrite(outLp, HIGH);
     digitalWrite(outLn, LOW);
     delay(small_turn);
-    turn =+ small_turn;
+    turn += small_turn;
     digitalWrite(outRp, HIGH);
     digitalWrite(outRn, LOW);
     digitalWrite(outLp, HIGH);
@@ -129,38 +137,43 @@ void setup()
 
 void loop()
 {
-  
+    Serial.println(block);
+    Serial.println(turn);
+    Serial.println(direction);
+    Serial.println(x);
+    Serial.println(y);
 
   if (turn >= full_turn) {
-    turn %= full_turn;
+    turn %=  full_turn;
     direction = (direction + 1) % 4;       
   }
   if (turn <= -full_turn) {
     turn %= full_turn;
-    turn =- full_turn;
+    turn -= full_turn;
     direction = (direction - 1) % 4;        
   }
 
     
   // drawing a mazz map  
   if (block >= full_block) {
-    
     print_mazz();
-    
+
     block %= full_block;
+
     mazz[x][y] = direction; 
+
     switch (direction) {
       case 0:        
-        y =- 1;
+        y -= 1;
         break;
       case 1:
-        x =+ 1;
+        x += 1;
         break;
       case 2:
-        y =+ 1;
+        y += 1;
         break;
       case 3:
-        x =- 1;
+        x -= 1;
         break;
     }       
     hand_on_wall() ;             
@@ -183,7 +196,7 @@ void loop()
     digitalWrite(outLn, LOW);
     
     delay(small_turn);
-    turn =+ small_turn;     
+    turn += small_turn;     
   } 
   if (buttonStateR == HIGH) {
     // turn LED on
@@ -195,7 +208,7 @@ void loop()
     digitalWrite(outRn, LOW);
     
     delay(small_turn);
-    turn =- small_turn;     
+    turn -= small_turn;     
   }
   
   if (buttonStateR == LOW && buttonStateL == LOW) {
@@ -226,6 +239,6 @@ void loop()
     digitalWrite(outRn, LOW);
     
     delay(full_turn+small_turn);
-    turn =- (full_turn+small_turn);      
+    turn -= (full_turn+small_turn);      
   }
 }
