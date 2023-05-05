@@ -51,7 +51,7 @@ const int outLn = 10;
 
 // creating n*n matrix for drawing mapp   
 const int H = 8;
-const int W = 8;
+const int W = 16;
 int mazz[H][W];
 
 // directions value  
@@ -70,14 +70,14 @@ const int full_turn = 320;
 int direction = 0;
 int block = 0;          
 int turn = 0;
-int x = W/2;
-int y = H/2;      
+int hi = H/2;
+int hj = W/2;      
 
 void print_mazz (){
-  for (int i = 0 ; i < W ; i++ )
+  for (int i=0 ; i < H ;i++)
   {
   Serial.println();
-  for (int j=0 ; j<H ;j++)
+  for (int j = 0 ; j < W ; j++ )
     {
       switch(mazz [i][j])
         {
@@ -123,9 +123,9 @@ void setup()
   // pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
   // set a mazz default value -1   
-  for (int i = 0 ; i < W ; i++ )
+  for (int j = 0 ; j < W ; j++ )
   {
-  for (int j=0 ; j<H ;j++)
+  for (int i = 0 ; i < H ; i++)
     {
       mazz [i][j] = -1;
     }
@@ -137,11 +137,11 @@ void setup()
 
 void loop()
 {
-    Serial.println(block);
-    Serial.println(turn);
-    Serial.println(direction);
-    Serial.println(x);
-    Serial.println(y);
+    Serial.print("block: "); Serial.println(block);
+    Serial.print("turn: "); Serial.println(turn);
+    Serial.print("dir: "); Serial.println(direction);
+    Serial.print("i: ");Serial.println(hi);
+    Serial.print("j: "); Serial.println(hj);
 
   if (turn >= full_turn) {
     turn %=  full_turn;
@@ -160,20 +160,20 @@ void loop()
 
     block %= full_block;
 
-    mazz[x][y] = direction; 
+    mazz[hi][hj] = direction; 
 
     switch (direction) {
       case 0:        
-        y -= 1;
+        hi -= 1;
         break;
       case 1:
-        x += 1;
+        hj += 1;
         break;
       case 2:
-        y += 1;
+        hi += 1;
         break;
       case 3:
-        x -= 1;
+        hj -= 1;
         break;
     }       
     hand_on_wall() ;             
