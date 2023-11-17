@@ -19,6 +19,10 @@ int outLn = 10;
 
 int moveDeley = 40;
 
+int trigger_right = 4;
+int trigger_left = 8;
+
+
 const int ldr_left = A1;
 const int ldr_center = A2;
 const int ldr_right = A3;
@@ -54,14 +58,14 @@ int getHighest(){
    int left = analogRead(ldr_left);
    int center = analogRead(ldr_center);
    int right = analogRead(ldr_right);
-   if(left > center && left > right){
+   if(left < center && left < right){
       return enum_left; //1 will signify the left sensor is highest
    }
-   else if(center > right){
-      return enum_center; //2 will signify the center sensor is highest
+   else if(right < center && right < left){ //if left or center isn't highest, then right probably is. 
+      return enum_right; 
    }
    else{
-     return enum_right; //if left or center isn't highest, then right probably is.
+     return enum_center; //2 will signify the center sensor is highest
    }
 }
 
@@ -85,7 +89,31 @@ int moveToLight(){
 }
 
 
+void moveToTrigger(){
+  // read the state of the pushbutton value
+  int buttonStateR = digitalRead(trigger_right);
+  int buttonStateL = digitalRead(trigger_left);
+  // check if pushbutton is pressed.  if it is, the
+  // buttonState is HIGH
+  if (buttonStateL == HIGH) {
+    // turn LED on
+    // digitalWrite(LED_BUILTIN, HIGH);
+      moveRight(); //move right
+  } 
+  else if (buttonStateR == HIGH) {
+    // turn LED on
+    // digitalWrite(LED_BUILTIN, HIGH);
+      moveLeft(); //move left
+  }
+  else{
+      moveForward(); //move foward
+  }
+}
+
 void setup() {
+  pinMode(trigger_right, INPUT);
+  pinMode(trigger_left, INPUT);
+
   pinMode(outRp, OUTPUT);
   pinMode(outRn, OUTPUT);
 
@@ -99,5 +127,6 @@ void setup() {
 
 void loop() {
   moveToLight();
+  // moveToTrigger();
   delay(moveDeley);
 }
