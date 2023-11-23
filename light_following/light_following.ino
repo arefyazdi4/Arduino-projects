@@ -173,6 +173,7 @@ int getState(){
   if (state == enum_center){ 
     state = getLightState();
   }
+  return state
 }
 
 void moveRobot(){
