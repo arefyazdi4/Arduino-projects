@@ -45,6 +45,10 @@ const int black = 0;
 void long_move_delay(){
       move_delay();
       move_delay();
+      move_delay();
+      move_delay();
+      move_delay();
+
 }
 
 void move_delay(){
@@ -120,10 +124,10 @@ int getWallState(){
   int triggerStateL = digitalRead(trigger_left);
   // check if pushbutton is pressed.  if it is, the
   if (triggerStateL == HIGH && triggerStateR == LOW) {
-      return enum_soft_right;
+      return enum_hard_right;
   } 
   else if (triggerStateR == HIGH && triggerStateL == LOW) {
-       return enum_soft_left;
+       return enum_hard_left;
   }
   else if (triggerStateR == HIGH && triggerStateL == HIGH){
       return enum_center;
@@ -135,7 +139,9 @@ int getWallState(){
 
 
 int is_stop_sign(int hard_left, int soft_left, int center, int soft_right, int hard_right){
-  if(center == white && hard_left == black && hard_right == black){  // 1_0_1
+  if((hard_left == black && soft_left == white && center == white && soft_right == white && hard_right == black) ||  // 01110
+     (hard_left == white && soft_left == white && center == white && soft_right == white && hard_right == white) ||   // 11111
+     (hard_left == black && soft_left == black && center == black && soft_right == black && hard_right == black) )  {  // 00000
     return 1;
   }  
   else {
@@ -144,9 +150,9 @@ int is_stop_sign(int hard_left, int soft_left, int center, int soft_right, int h
 }
 
 int is_stright_line(int hard_left, int soft_left, int center, int soft_right, int hard_right){ 
-  if((hard_left == white && soft_left == white && center == black && soft_right == white && hard_right == white) ||  // 00100
-     (hard_left == white && soft_left == black && center == black && soft_right == white && hard_right == white) ||  // 01100
-     (hard_left == white && soft_left == white && center == black && soft_right == black && hard_right == white)) {  // 00110
+  if((hard_left == white && soft_left == white && center == black && soft_right == white && hard_right == white) ||  // 11011
+     (hard_left == white && soft_left == black && center == black && soft_right == white && hard_right == white) ||  // 10011
+     (hard_left == white && soft_left == white && center == black && soft_right == black && hard_right == white)) {  // 11001
     return 1;
   } 
   else {
@@ -155,8 +161,9 @@ int is_stright_line(int hard_left, int soft_left, int center, int soft_right, in
 }
 
 int is_soft_left_turn(int hard_left, int soft_left, int center, int soft_right, int hard_right){
-  if((hard_left == black && soft_left == black && center == white && soft_right == white && hard_right == white) ||  // 11000
-     (hard_left == black && soft_left == black && center == black && soft_right == white && hard_right == white)) {  // 11100
+  if((hard_left == white && soft_left == black && center == white && soft_right == white && hard_right == white) ||  // 10111
+     (hard_left == black && soft_left == black && center == white && soft_right == white && hard_right == white) ||  // 00111
+     (hard_left == black && soft_left == black && center == black && soft_right == white && hard_right == white)) {  // 00011
     return 1; 
   } 
   else {
@@ -165,8 +172,9 @@ int is_soft_left_turn(int hard_left, int soft_left, int center, int soft_right, 
 }
 
 int is_soft_right_turn(int hard_left, int soft_left, int center, int soft_right, int hard_right){
-  if((hard_left == white && soft_left == white && center == white && soft_right == black && hard_right == black) ||  // 00011
-     (hard_left == white && soft_left == white && center == black && soft_right == black && hard_right == black)) {  // 00111
+  if((hard_left == white && soft_left == white && center == white && soft_right == black && hard_right == black) ||  // 11101
+     (hard_left == white && soft_left == white && center == white && soft_right == black && hard_right == black) ||  // 11100
+     (hard_left == white && soft_left == white && center == black && soft_right == black && hard_right == black)) {  // 11000
      return 1;
   } 
   else {
@@ -175,7 +183,7 @@ int is_soft_right_turn(int hard_left, int soft_left, int center, int soft_right,
 }
 
 int is_hard_left_turn(int hard_left, int soft_left, int center, int soft_right, int hard_right){
-  if(hard_left == black && soft_left == white && center == white && soft_right == white && hard_right == white) {  // 10000
+  if(hard_left == black && soft_left == white && center == white && soft_right == white && hard_right == white) {  // 01111
     return 1; 
   } 
   else {
@@ -184,7 +192,7 @@ int is_hard_left_turn(int hard_left, int soft_left, int center, int soft_right, 
 }
 
 int is_hard_right_turn(int hard_left, int soft_left, int center, int soft_right, int hard_right){
-  if(hard_left == white && soft_left == white && center == white && soft_right == white && hard_right == black) {  // 00001
+  if(hard_left == white && soft_left == white && center == white && soft_right == white && hard_right == black) {  // 11110
      return 1;
   } 
   else {
@@ -255,7 +263,7 @@ void moveToState(int state){
       long_move_delay();
       break;
     case enum_hard_right:
-      moveLeft();
+      moveRight();
       long_move_delay();
       break;
   }
@@ -279,10 +287,10 @@ void setup() {
 
 int getState(){
   int state = enum_stop;
-  state = getWallState();
-  if (state == enum_center){   
+  // state = getWallState();
+  // if (state == enum_center){   
     state = getLineState();
-  }
+  // }
   Serial.println(state);
   return state;
 }
